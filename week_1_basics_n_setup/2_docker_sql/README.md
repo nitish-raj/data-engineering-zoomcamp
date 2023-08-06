@@ -7,13 +7,20 @@ Notes I used for preparing the videos: [link](https://docs.google.com/document/d
 
 All the commands from the video
 
-Downloading the data
+1. Downloading the data (For GCP)
 
 ```bash
 wget https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz 
 ```
 
 > Note: now the CSV data is stored in the `csv_backup` folder, not `trip+date` like previously
+
+2. S3 information to use directly (no download required) in AWS
+```
+bucket : nyc-tlc
+key: trip data/yellow_tripdata_2023
+```
+
 
 ### Running Postgres with Docker
 

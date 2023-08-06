@@ -1,78 +1,91 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-import os
-import argparse
-
-from time import time
-
+# Import libraries
+import sys
 import pandas as pd
+import boto3
 from sqlalchemy import create_engine
+import argparse
+import os
 
+def list_s3_by_prefix(bucket, key_prefix=''):
+    # Define S3 client
+    s3_client = boto3.client('s3')
+    
+    next_token = ''
+    all_keys = []
+    while True:
+        if next_token:
+            res = s3_client.list_objects_v2(
+                Bucket=bucket,
+                ContinuationToken=next_token,
+                Prefix=key_prefix,
+                RequestPayer='requester')
+        else:
+            res = s3_client.list_objects_v2(
+                Bucket=bucket,
+                Prefix=key_prefix,
+                RequestPayer='requester')
+
+        try:
+            if res['IsTruncated']:
+                next_token = res['NextContinuationToken']
+            else:
+                next_token = ''
+
+            keys = [item['Key'] for item in res['Contents'] if item['Size'] > 0]
+            all_keys.extend(keys)
+        except:
+            break
+
+        if not next_token:
+            break
+
+    return all_keys
 
 def main(params):
     user = params.user
     password = params.password
-    host = params.host 
-    port = params.port 
+    host = params.host
+    port = params.port
     db = params.db
     table_name = params.table_name
-    url = params.url
-    
-    # the backup files are gzipped, and it's important to keep the correct extension
-    # for pandas to be able to open the file
-    if url.endswith('.csv.gz'):
-        csv_name = 'output.csv.gz'
-    else:
-        csv_name = 'output.csv'
+    s3_bucket = params.s3_bucket
+    s3_key = params.s3_key
 
-    os.system(f"wget {url} -O {csv_name}")
+    # Download Keys
+    source_keys = list_s3_by_prefix(s3_bucket,s3_key)
+
+    # Read data from S3
+    data = pd.read_parquet(f's3://{s3_bucket}/{source_keys[0]}')
+
+    data.tpep_pickup_datetime = pd.to_datetime(data.tpep_pickup_datetime)
+    data.tpep_dropoff_datetime = pd.to_datetime(data.tpep_dropoff_datetime)
+
+    # Create engine and write to database
 
     engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
 
-    df_iter = pd.read_csv(csv_name, iterator=True, chunksize=100000)
-
-    df = next(df_iter)
-
-    df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-    df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
-
-    df.head(n=0).to_sql(name=table_name, con=engine, if_exists='replace')
-
-    df.to_sql(name=table_name, con=engine, if_exists='append')
-
-
-    while True: 
-
-        try:
-            t_start = time()
-            
-            df = next(df_iter)
-
-            df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-            df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
-
-            df.to_sql(name=table_name, con=engine, if_exists='append')
-
-            t_end = time()
-
-            print('inserted another chunk, took %.3f second' % (t_end - t_start))
-
-        except StopIteration:
-            print("Finished ingesting data into the postgres database")
-            break
+    print("Writing to Postgres")
+    data.head(300000).to_sql(name=table_name, con = engine, if_exists='append', index = False, chunksize = 50000, method = 'multi')
+    print("Finished writing to Postgres")
 
 if __name__ == '__main__':
+
+    # Define argparse
     parser = argparse.ArgumentParser(description='Ingest CSV data to Postgres')
 
-    parser.add_argument('--user', required=True, help='user name for postgres')
-    parser.add_argument('--password', required=True, help='password for postgres')
-    parser.add_argument('--host', required=True, help='host for postgres')
-    parser.add_argument('--port', required=True, help='port for postgres')
-    parser.add_argument('--db', required=True, help='database name for postgres')
-    parser.add_argument('--table_name', required=True, help='name of the table where we will write the results to')
-    parser.add_argument('--url', required=True, help='url of the csv file')
+    # Define arguments
+    # user , password , host , port , db , table_name , s3_bucket , s3_key , region
+    parser.add_argument('--user', help='Username for Postgres')
+    parser.add_argument('--password', help='Password for Postgres')
+    parser.add_argument('--host', help='Host for Postgres')
+    parser.add_argument('--port', help='Port for Postgres')
+    parser.add_argument('--db', help='Database name for Postgres')
+    parser.add_argument('--table_name', help='Name of the table where we will write the results to')
+    parser.add_argument('--s3_bucket', help='Name of the S3 bucket where the CSV file is located')
+    parser.add_argument('--s3_key', help='Name of the S3 key where the CSV file is located')
 
+    # Parse arguments
     args = parser.parse_args()
 
     main(args)
+
