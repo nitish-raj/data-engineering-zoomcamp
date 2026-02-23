@@ -151,5 +151,5 @@ bruin query --connection duckdb-default \
 
 ## Further Reading
 
-- [Bruin Documentation - CLI Reference](https://getbruin.com/docs/bruin/reference/cli)
+- [Bruin Documentation - CLI Reference](https://getbruin.com/docs/bruin/commands/overview.html)
 - [Bruin GitHub Repository](https://github.com/bruin-data/bruin)

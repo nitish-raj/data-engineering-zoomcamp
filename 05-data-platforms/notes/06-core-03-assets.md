@@ -126,5 +126,5 @@ bruin lineage ./pipeline.yml --asset raw.trips_raw
 
 ## Further Reading
 
-- [Bruin Documentation - Assets](https://getbruin.com/docs/bruin/concepts/assets)
-- [Materialization Strategies](https://getbruin.com/docs/bruin/concepts/materialization)
+- [Bruin Documentation - Assets](https://getbruin.com/docs/bruin/assets/definition-schema.html)
+- [Materialization Strategies](https://getbruin.com/docs/bruin/assets/materialization.html)

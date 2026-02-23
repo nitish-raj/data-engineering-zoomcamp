@@ -75,5 +75,5 @@ bruin run ./pipelines/nyc-taxi/pipeline.yml
 
 ## Further Reading
 
-- [Bruin Documentation - Pipelines](https://getbruin.com/docs/bruin/concepts/pipelines)
-- [Pipeline Configuration Reference](https://getbruin.com/docs/bruin/reference/pipeline-yaml)
+- [Bruin Documentation - Pipelines](https://getbruin.com/docs/bruin/pipelines/definition.html)
+- [Pipeline Configuration Reference](https://getbruin.com/docs/bruin/pipelines/definition.html)

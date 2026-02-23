@@ -138,5 +138,5 @@ bruin run ./pipeline.yml --exclusive-end-date
 
 ## Further Reading
 
-- [Bruin Documentation - Variables](https://getbruin.com/docs/bruin/concepts/variables)
-- [Pipeline Runtime Options](https://getbruin.com/docs/bruin/reference/run-commands)
+- [Bruin Documentation - Variables](https://getbruin.com/docs/bruin/core-concepts/variables.html)
+- [Pipeline Runtime Options](https://getbruin.com/docs/bruin/commands/run.html)

@@ -84,5 +84,5 @@ bruin validate .
 
 ## Further Reading
 
-- [Bruin Documentation - Projects](https://getbruin.com/docs/bruin/getting-started/projects)
+- [Bruin Documentation - Projects](https://getbruin.com/docs/bruin/core-concepts/project.html)
 - [Bruin GitHub - Templates](https://github.com/bruin-data/bruin/tree/main/templates)
