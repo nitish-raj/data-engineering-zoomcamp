@@ -1,6 +1,6 @@
 # From APIs to Warehouses: AI-Assisted Data Ingestion with dlt
 
-[Register for the workshop](https://luma.com/hzis1yzp)
+[Video](https://www.youtube.com/watch?v=5eMytPBgmVs)
 
 This hands-on workshop focuses on building reliable data ingestion pipelines to data warehouses (for example, Snowflake) using dlt (data load tool), enhanced with LLMs, the dlt dashboard, and dlt MCP.
 
