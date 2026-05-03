@@ -18,6 +18,10 @@ Develop a dashboard with two tiles by:
 * Transforming the data in the data warehouse: prepare it for the dashboard
 * Building a dashboard to visualize the data
 
+### Datasets you cannot use
+
+The NYC taxi dataset is used throughout the course modules and homework. It cannot be used for the project. Pick any other dataset.
+
 
 ## Data Pipeline 
 
